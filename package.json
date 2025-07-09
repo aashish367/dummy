@@ -73,8 +73,5 @@
     "typescript": "^5.6.3",
     "vaul": "^0.9.9",
     "zod": "^3.23.8"
-  },
-  "devDependencies": {
-    "@netlify/next": "^5.0.0"
   }
 }
