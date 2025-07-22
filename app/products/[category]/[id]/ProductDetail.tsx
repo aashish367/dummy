@@ -671,6 +671,7 @@ Thank you!`;
                 {/* Action Buttons */}
                 <div className="space-y-3">
                   <button
+                     id="whatsapp-inquiry"
                     onClick={handleWhatsAppInquiry}
                     className="w-full bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-lg font-semibold transition-colors flex items-center justify-center text-sm md:text-base"
                   >
