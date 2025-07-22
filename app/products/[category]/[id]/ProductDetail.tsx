@@ -23,6 +23,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useQuoteItems } from "@/hooks/useQuoteItems";
 import ProductReviews from "@/components/products/ProductReviews";
+import { useReferralTracking } from '@/lib/referral-tracking'
 import { supabase, type Product, normalizeCoverImage } from "@/lib/supabase";
 
 // Add this interface for your props
@@ -53,7 +54,17 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   const [authModalMode, setAuthModalMode] = useState<"login" | "signup">("login");
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const [quoteLoading, setQuoteLoading] = useState(false);
+// Add referral tracking here, after product state is declared
+  const referralCode = typeof window !== 'undefined'
+    ? new URLSearchParams(window.location.search).get('ref')
+    : null;
 
+  useReferralTracking({
+    productId: product?.id || '', // Use optional chaining and provide fallback
+    referralCode,
+    whatsappButtonSelector: '#whatsapp-inquiry',
+    supabaseApiUrl: '/api/track-referral', 
+  });
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
