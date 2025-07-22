@@ -235,29 +235,60 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     );
   }
 
-  const pricingTiers = [
-    { quantity: product.moq, price: product.price, discount: 0 },
-    {
-      quantity: product.moq * 2,
-      price: parseFloat((product.price * 0.93).toFixed(2)),
-      discount: 7,
-    },
-    {
-      quantity: product.moq * 5,
-      price: parseFloat((product.price * 0.87).toFixed(2)),
-      discount: 13,
-    },
-    {
-      quantity: product.moq * 10,
-      price: parseFloat((product.price * 0.8).toFixed(2)),
-      discount: 20,
-    },
-    {
-      quantity: product.moq * 20,
-      price: parseFloat((product.price * 0.73).toFixed(2)),
-      discount: 27,
-    },
-  ];
+  // Function to get filtered pricing tiers based on product category and brand
+  const getFilteredPricingTiers = () => {
+    const basePricingTiers = [
+      { quantity: product.moq, price: product.price, discount: 0 },
+      {
+        quantity: product.moq * 2,
+        price: parseFloat((product.price * 0.93).toFixed(2)),
+        discount: 7,
+      },
+      {
+        quantity: product.moq * 5,
+        price: parseFloat((product.price * 0.87).toFixed(2)),
+        discount: 13,
+      },
+      {
+        quantity: product.moq * 10,
+        price: parseFloat((product.price * 0.8).toFixed(2)),
+        discount: 20,
+      },
+      {
+        quantity: product.moq * 20,
+        price: parseFloat((product.price * 0.73).toFixed(2)),
+        discount: 27,
+      },
+    ];
+
+    // Check if this is a wall-clock with designer subcategory
+    const isWallClockDesigner = product.category === 'wall-clocks' && 
+      (product.subcategory === 'designer');
+
+    // Check if this is a table-clock with orpat brand
+    const isTableClockOrpat = product.category === 'table-clocks' && 
+      product.brand?.toLowerCase() === 'orpat';
+
+    console.log('Product category:', product.category);
+    console.log('Product brand:', product.brand);
+    console.log('Is table-clock + orpat:', isTableClockOrpat);
+
+    // For wall-clock + designer: show all discounts (no filtering needed)
+    if (isWallClockDesigner) {
+      return basePricingTiers.filter(tier => tier.discount <= 20);
+    }
+
+    // For table-clock + orpat: limit discounts to maximum 20%
+    if (isTableClockOrpat) {
+      console.log('Filtering for table-clocks + orpat');
+      return basePricingTiers.filter(tier => tier.discount <= 20);
+    }
+
+    // For all other products: show all discounts
+    return basePricingTiers;
+  };
+
+  const pricingTiers = getFilteredPricingTiers();
 
   const getCurrentPricing = () => {
     const tier =
@@ -589,6 +620,11 @@ Thank you!`;
                   <div className="mb-6">
                     <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                       Volume Discounts Available
+                      {product.category === 'table-clock' && product.brand?.toLowerCase() === 'orpat' && (
+                        <span className="text-xs text-amber-600 dark:text-amber-400 ml-2">
+                          (Special pricing for Orpat table clocks)
+                        </span>
+                      )}
                     </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {pricingTiers.map((tier) => (
